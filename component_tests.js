@@ -30,11 +30,10 @@ const e = {
 };
 
 function Log({ value = '' } = {}) {
-  // console.log('Log', value);
+  console.log('Log!', value);
 }
 
 function Toggle({ toggledOn = true } = {}) {
-  // console.log('Toggle', toggledOn)
   return { out: toggledOn }
 }
 
@@ -57,13 +56,25 @@ function ComparatorGate({ in1, in2, comparator = '>' }) {
 };
 
 function Delay({ time = 1000 } = {}) {
-  return execute => {
-    setTimeout(() => execute({ out: true }), time);
+  return (execute) => {
+    setTimeout(() => {
+      execute({ out: true });
+    }, time);
+  };
+}
+
+function Interval({ time = 1000 } = {}) {
+  return (execute) => {
+    setInterval(() => {
+      execute({ out: Math.random() * 10 });
+    }, time);
   };
 }
 
 function DrawBox({ ctx, x, y, w, h } = {}) {
   ctx.fillRect(x, y, w, h);
+  // useRequestAnimationFrame(() => {
+  // });
 
   return { ctx, x, y, w, h };
 };
@@ -117,47 +128,63 @@ function Board() {
         props: {},
         execute: props => {
           const storedComponent = this.components[id];
-          const computedProps = component(props)
+          const computedProps = component(props);
+          const isThunk = typeof computedProps === 'function';
 
-          storedComponent.props = {
-            ...storedComponent.props,
-            ...computedProps
-          };
+          console.log(`execute: ${id}`, storedComponent.props, isThunk);
 
-          console.log(`execute: ${id}`, storedComponent.props);
+          if (!isThunk) {
+            doStuff.call(this, computedProps);
+          } else {
+            console.log('do thunky stuff');
+            const executor = (props) => {
+              doStuff.call(this, props);
+            };
 
-          const outletConnectionsForComponent = this.connections.filter(connection => {
-            return connection.from[0] === id;
-          });
-
-          const affectedComponents = outletConnectionsForComponent.map(connection => {
-            const outlet = connection.from[1];
-            const value = computedProps[outlet];
-
-            return {
-              id: connection.to[0],
-              inlet: connection.to[1],
-              value
-            }
-          }).filter(affectedComponent => !!affectedComponent.value);
-
-          if (!affectedComponents.length) {
-            return;
+            const t = component()(executor);
           }
 
-          affectedComponents.forEach(component => {
-            const { id: toId, inlet, value } = component;
-            const storedAffectedComponent = this.components[toId];
+          function doStuff(newComputedProps) {
+            storedComponent.props = {
+              ...storedComponent.props,
+              ...newComputedProps
+            };
 
-            const newProps = {
-              ...storedAffectedComponent.props,
-              ...{ [inlet]: value }
+            const outletConnectionsForComponent = this.connections.filter(connection => {
+              return connection.from[0] === id;
+            });
+
+            let affectedComponents = outletConnectionsForComponent.map(connection => {
+              const outlet = connection.from[1];
+              const value = newComputedProps[outlet];
+
+              return {
+                id: connection.to[0],
+                inlet: connection.to[1],
+                value
+              }
+            })
+
+            affectedComponents.filter(affectedComponent => !!affectedComponent.value);
+
+            if (!affectedComponents.length) {
+              return;
             }
 
-            storedAffectedComponent.props = newProps;
+            affectedComponents.forEach(component => {
+              const { id: toId, inlet, value } = component;
+              const storedAffectedComponent = this.components[toId];
 
-            this.components[toId].execute(storedAffectedComponent.props)
-          });
+              const newProps = {
+                ...storedAffectedComponent.props,
+                ...{ [inlet]: value }
+              }
+
+              storedAffectedComponent.props = newProps;
+
+              this.components[toId].execute(storedAffectedComponent.props)
+            });
+          }
         }
       };
 
@@ -193,6 +220,10 @@ const andGate = board.createComponent(AndGate);
 const toggle = board.createComponent(Toggle);
 const toggle2 = board.createComponent(Toggle);
 const log = board.createComponent(Log);
+const delay = board.createComponent(Delay);
+const interval1 = board.createComponent(Interval);
+const interval2 = board.createComponent(Interval);
+const comparator = board.createComponent(ComparatorGate);
 
 board.connect(toggle, 'out').to(andGate, 'in1');
 board.connect(toggle2, 'out').to(andGate, 'in2');
@@ -203,3 +234,12 @@ toggle2.execute({ toggledOn: true });
 toggle.execute({ toggledOn: false });
 toggle.execute({ toggledOn: true });
 
+
+board.connect(delay, 'out').to(interval1, '');
+board.connect(delay, 'out').to(interval2, '');
+board.connect(interval1, 'out').to(comparator, 'in1');
+board.connect(interval2, 'out').to(comparator, 'in2');
+board.connect(comparator, 'out').to(log, 'value');
+
+delay.execute();
+// interval2.execute();
