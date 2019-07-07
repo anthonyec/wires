@@ -1,0 +1,108 @@
+<canvas id="canvas">
+
+</canvas>
+
+<script>
+  window.module = { 'exports': null }
+</script>
+<script src="lib/graph.js"></script>
+<script>
+  const graph = module.exports();
+
+  function Sin() {
+    let t = 0;
+    return (execute) => {
+      setInterval(() => {
+        t++;
+        execute({ sin: Math.sin(t/100) * 100 })
+      }, 1);
+    };
+  };
+
+  function Slider({ dom = null }) {
+    return (execute) => {
+      if (!dom) {
+        return;
+      }
+
+      const slider = document.createElement('input');
+      slider.setAttribute('type', 'range');
+      dom.appendChild(slider);
+
+      document.addEventListener('change', (evt) => {
+        execute({ progress: parseInt(slider.value) })
+      });
+
+      execute({ progress: parseInt(slider.value) })
+    }
+  };
+
+  function ClearRect({ ctx } = {}) {
+    if (!ctx) {
+      console.error('No ctx');
+      return;
+    }
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  };
+
+  function DrawRect({ ctx = null, x = 0, y = 0, w = 100, h = 100} = {}) {
+    if (!ctx) {
+      console.error('No ctx');
+      return;
+    }
+
+    ctx.beginPath()
+    ctx.strokeStyle = 'red';
+    ctx.fillStyle = 'black';
+    ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.stroke();
+
+    return { x, y, w, h };
+  };
+
+  function Log({ in1 = '' } = {}) {
+    if (in1) {
+      console.log('LOG:', in1);
+    }
+
+    return {};
+  }
+
+  const request = graph.createComponent(({ url = ''} = {}) => {
+    return (execute) => {
+      fetch(url).then((body) => body.text()).then((text) => {
+        execute({ data: text });
+      });
+    };
+  });
+  const log = graph.createComponent(Log);
+  const rect1 = graph.createComponent(DrawRect);
+  const rect2 = graph.createComponent(DrawRect);
+  const slider1 = graph.createComponent(Slider);
+  const slider2 = graph.createComponent(Slider);
+  const clear = graph.createComponent(ClearRect);
+  const sin = graph.createComponent(Sin);
+
+  // graph.connect(request, 'data').to(log, 'in1');
+
+  graph.connect(sin, 'sin').to(rect2, 'y');
+
+  graph.connect(slider1, 'progress').to(clear);
+  graph.connect(slider1, 'progress').to(rect1, 'w');
+  graph.connect(rect1, 'w').to(rect2, 'x');
+
+  // graph.setContextProps({
+  //   ctx: document.getElementById('canvas').getContext('2d'),
+  //   body: document.body
+  // });
+
+  request.setProps({ url: 'http://localhost:3001/' });
+  rect1.setProps({ ctx: document.getElementById('canvas').getContext('2d') });
+  rect2.setProps({ ctx: document.getElementById('canvas').getContext('2d') });
+  slider1.setProps({ dom: document.body });
+  clear.setProps({ ctx: document.getElementById('canvas').getContext('2d') });
+
+  graph.start();
+</script>

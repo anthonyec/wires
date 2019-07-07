@@ -6,6 +6,7 @@ const { WriteFile, ReadFile } = require('./components/file');
 const { Interval, Delay } = require('./components/time');
 const { Round, Random, Compare } = require('./components/number');
 const { Prepend } = require('./components/text');
+const { Request } = require('./components/network');
 
 const graph = createGraph();
 
@@ -19,7 +20,8 @@ const [
   prepend,
   andGate,
   compare,
-  delay
+  delay,
+  request
 ] = graph.createComponents(
   Random,
   Log,
@@ -30,8 +32,12 @@ const [
   Prepend,
   AndGate,
   Compare,
-  Delay
+  Delay,
+  Request
 );
+
+graph.connect(request, 'data').to(prepend, 'text');
+graph.connect(request, 'err').to(log, 'in1');
 
 graph.connect(interval, 'out').to(random, 'generate');
 graph.connect(random, 'number').to(round, 'number');
@@ -49,5 +55,9 @@ graph.connect(delay, 'out').to(log, 'in1');
 
 writeFile.setProps({ path: './output.txt' });
 compare.setProps({ in2: 50 });
-prepend.setProps({ textToPrepend: 'Text in file: ' });
-interval.execute();
+prepend.setProps({ textToPrepend: 'Some cool text: ' });
+request.setProps({ url: 'http://pastebin.com/raw/Gw6SEq5R' });
+
+// interval.execute();
+// request.execute({ url: 'http://pastebin.com/raw/Gw6SEq5R' });
+graph.start();
