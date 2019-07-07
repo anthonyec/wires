@@ -29,5 +29,5 @@ console.log('');
 
 console.log('-- execution --');
 toggle1.execute({ toggledOn: true });
-// toggle2.execute({ toggledOn: true });
+toggle2.execute({ toggledOn: true });
 console.log('');
