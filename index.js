@@ -22,7 +22,7 @@ const toggle1 = graph.createComponent(Toggle);
 const toggle2 = graph.createComponent(Toggle);
 const delay = graph.createComponent(Delay);
 
-
+console.log(graph);
 
 /*
                                           .-> [in1]node2[out1] ----.-> [in1]delay[out] --.
@@ -51,4 +51,4 @@ console.log('');
 console.log('-- execution --');
 toggle1.execute({ toggledOn: true });
 toggle2.execute({ toggledOn: true });
-console.log('');
+// console.log('');

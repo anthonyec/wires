@@ -1,7 +1,7 @@
 function Delay({ time = 1000 } = {}) {
   return (execute) => {
-    const timeout = setTimeout(() => {
-      execute({ out: timeout });
+    setTimeout(() => {
+      execute({ out: 'timeout_done' });
     }, time);
   }
 };
