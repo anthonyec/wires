@@ -32,6 +32,7 @@ graph.connect(pluck, 'err').to(log, 'in1');
 graph.connect(parseJson, 'err').to(log, 'in1');
 graph.connect(request, 'err').to(log, 'in1');
 
+// Initial props
 prepend.setProps({ textToPrepend: 'London weather: ' });
 pluck.setProps({ path: '.weather[0].main' });
 request.setProps({ url: 'https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b6907d289e10d714a6e88b30761fae22' });
