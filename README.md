@@ -14,7 +14,7 @@ const log = graph.createComponent(Log);
 
 ### Connecting components
 ```js
-// Connect the toggle output port "out" to log input port "in1"
+// Connect the toggle output prop "out" to log input prop "in1"
 graph.connect(toggle, 'out').to(log, 'in1');
 ```
 
@@ -65,9 +65,9 @@ _An example of setting a prop on a component to forever be `true`_
 
 ## Schema
 ### Connections
-`
+```js
 {
   from: { uid: 'Text_1', prop: 'out' }
   to: { uid: 'Log_1', prop: 'in1' }
 }
-`
+```
