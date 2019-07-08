@@ -1,10 +1,21 @@
-<canvas id="canvas">
+<style>
+  body {
+    margin: 0;
+  }
+
+  canvas {
+    border: 1px solid red;
+  }
+</style>
+
+<canvas id="canvas" width="800" height="600">
 
 </canvas>
 
 <script>
   window.module = { 'exports': null }
 </script>
+<script src="vendor/fabric.min.js"></script>
 <script src="lib/graph.js"></script>
 <script>
   const graph = module.exports();
@@ -37,7 +48,7 @@
     }
   };
 
-  function ClearRect({ ctx } = {}) {
+  function ClearRect({ ctx, clear = false } = {}) {
     if (!ctx) {
       console.error('No ctx');
       return;
@@ -46,7 +57,15 @@
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   };
 
-  function DrawRect({ ctx = null, x = 0, y = 0, w = 100, h = 100} = {}) {
+  function Mouse({ target }) {
+    return (execute) => {
+      target.addEventListener('mousemove', (evt) => {
+        execute({ x: evt.clientX, y: evt.clientY });
+      });
+    };
+  }
+
+  function DrawRect({ ctx = null, x = 0, y = 0, w = 100, h = 100, px = 0, py = 0 } = {}) {
     if (!ctx) {
       console.error('No ctx');
       return;
@@ -55,7 +74,7 @@
     ctx.beginPath()
     ctx.strokeStyle = 'red';
     ctx.fillStyle = 'black';
-    ctx.rect(x, y, w, h);
+    ctx.rect(x - (w * px), y - (w * py), w, h);
     ctx.fill();
     ctx.stroke();
 
@@ -70,39 +89,90 @@
     return {};
   }
 
+  function FabricRect({ canvas, x = 0, y = 0, w = 100, h = 100, fill = 'red' } = {}) {
+    return (execute) => {
+      function eventUpdate(evt) {
+        execute({
+          x: evt.target.left,
+          y: evt.target.top,
+          'x+w': evt.target.left + (evt.target.width * evt.target.scaleX),
+          w: evt.target.width,
+          h: evt.target.height
+        });
+      };
+
+      // Bad way for now yes.
+      if (!this.props._object) {
+        const rect = new fabric.Rect({
+          left: x,
+          top: y,
+          fill: fill,
+          width: 100,
+          height: 100
+        });
+
+
+        this.props._object = rect;
+        this.props._object.on('modified', eventUpdate);
+        this.props._object.on('moving', eventUpdate);
+        this.props._object.on('scaling', eventUpdate);
+        this.props._object.on('rotating', eventUpdate);
+
+        execute({ x, y, w, h });
+        canvas.add(rect);
+      }
+
+      if (this.props._object) {
+        this.props._object.set({
+          top: y,
+          left: x,
+          'x+w': x + (this.props._object.width * this.props._object.scaleX),
+          width: w,
+          height: h
+        });
+
+        canvas.renderAll();
+      }
+
+      execute({ x, y, w, h });
+    };
+  };
+
+  // function Ease({ targetValue = 0 } = {}) {
+  //   return (execute) => {
+  //     if (this.props._currentValue === targetValue) {
+
+  //     }
+  //   };
+  // };
+
   const request = graph.createComponent(({ url = ''} = {}) => {
     return (execute) => {
-      fetch(url).then((body) => body.text()).then((text) => {
-        execute({ data: text });
-      });
+      setTimeout(() => {
+        fetch(url).then((body) => body.text()).then((text) => {
+          execute({ data: text });
+        });
+      }, 1000);
     };
   });
+
+  // const rect1 = graph.createComponent(DrawRect);
+  const fabricRect = graph.createComponent(FabricRect);
+  const fabricRect2 = graph.createComponent(FabricRect);
+  const mouse = graph.createComponent(Mouse);
   const log = graph.createComponent(Log);
-  const rect1 = graph.createComponent(DrawRect);
-  const rect2 = graph.createComponent(DrawRect);
-  const slider1 = graph.createComponent(Slider);
-  const slider2 = graph.createComponent(Slider);
-  const clear = graph.createComponent(ClearRect);
-  const sin = graph.createComponent(Sin);
 
-  // graph.connect(request, 'data').to(log, 'in1');
+  const canvas = new fabric.Canvas('canvas');
 
-  graph.connect(sin, 'sin').to(rect2, 'y');
+  graph.connect(mouse, 'x').to(fabricRect, 'x');
+  graph.connect(mouse, 'y').to(fabricRect, 'y');
 
-  graph.connect(slider1, 'progress').to(clear);
-  graph.connect(slider1, 'progress').to(rect1, 'w');
-  graph.connect(rect1, 'w').to(rect2, 'x');
+  graph.connect(fabricRect, 'x+w').to(fabricRect2, 'x');
+  graph.connect(fabricRect, 'y').to(fabricRect2, 'y');
 
-  // graph.setContextProps({
-  //   ctx: document.getElementById('canvas').getContext('2d'),
-  //   body: document.body
-  // });
-
-  request.setProps({ url: 'http://localhost:3001/' });
-  rect1.setProps({ ctx: document.getElementById('canvas').getContext('2d') });
-  rect2.setProps({ ctx: document.getElementById('canvas').getContext('2d') });
-  slider1.setProps({ dom: document.body });
-  clear.setProps({ ctx: document.getElementById('canvas').getContext('2d') });
+  fabricRect.setProps({ canvas });
+  fabricRect2.setProps({ canvas, fill: 'blue' });
+  mouse.setProps({ target: document.body });
 
   graph.start();
 </script>

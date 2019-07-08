@@ -1,17 +1,17 @@
 const http = require('http');
 
 function Request({ url = '' } = {}) {
-  return (execute) => {
+  return (next) => {
     try {
       http.get(url, function(response) {
         let data = '';
         response.on('data', (chunk) => { data += chunk; });
         response.on('end', () => {
-          execute({ data });
+          next({ data });
         });
       });
     } catch(err) {
-      execute({ data: '', err });
+      next({ data: '', err });
     }
   };
 };

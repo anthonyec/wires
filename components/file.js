@@ -1,17 +1,17 @@
 const fs = require('fs');
 
 function WriteFile({ path = '', content = '' } = {}) {
-  return (execute) => {
+  return (next) => {
     fs.writeFile(path, content, (err) => {
-      execute({ path, content, err });
+      next({ path, content, err });
     });
   };
 };
 
 function ReadFile({ path = '' } = {}) {
-  return (execute) => {
+  return (next) => {
     fs.readFile(path, 'utf8', (err, content) => {
-      execute({ err, path, content });
+      next({ err, path, content });
     });
   };
 };

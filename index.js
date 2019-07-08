@@ -21,6 +21,7 @@ const [
   andGate,
   compare,
   delay,
+  delay2,
   request
 ] = graph.createComponents(
   Random,
@@ -33,13 +34,14 @@ const [
   AndGate,
   Compare,
   Delay,
+  Delay,
   Request
 );
 
 graph.connect(request, 'data').to(prepend, 'text');
 graph.connect(request, 'err').to(log, 'in1');
 
-graph.connect(interval, 'out').to(random, 'generate');
+graph.connect(delay2, 'out').to(random, 'generate');
 graph.connect(random, 'number').to(round, 'number');
 graph.connect(round, 'roundedNumber').to(writeFile, 'content');
 graph.connect(writeFile, 'err').to(log, 'in1');
