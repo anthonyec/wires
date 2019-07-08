@@ -1,9 +1,9 @@
-const http = require('http');
+const https = require('https');
 
 function Request({ url = '' } = {}) {
   return (next) => {
     try {
-      http.get(url, function(response) {
+      https.get(url, function(response) {
         let data = '';
         response.on('data', (chunk) => { data += chunk; });
         response.on('end', () => {

@@ -1,65 +1,39 @@
 const createGraph = require('./lib/graph');
 
-const { AndGate } = require('./components/gates');
 const Log = require('./components/log');
-const { WriteFile, ReadFile } = require('./components/file');
-const { Interval, Delay } = require('./components/time');
-const { Round, Random, Compare } = require('./components/number');
 const { Prepend } = require('./components/text');
 const { Request } = require('./components/network');
+const { ParseJson, Pluck } = require('./components/json');
 
 const graph = createGraph();
 
 const [
-  random,
   log,
-  interval,
-  writeFile,
-  round,
-  readFile,
   prepend,
-  andGate,
-  compare,
-  delay,
-  delay2,
-  request
+  request,
+  parseJson,
+  pluck
 ] = graph.createComponents(
-  Random,
   Log,
-  Interval,
-  WriteFile,
-  Round,
-  ReadFile,
   Prepend,
-  AndGate,
-  Compare,
-  Delay,
-  Delay,
-  Request
+  Request,
+  ParseJson,
+  Pluck
 );
 
-graph.connect(request, 'data').to(prepend, 'text');
-graph.connect(request, 'err').to(log, 'in1');
-
-graph.connect(delay2, 'out').to(random, 'generate');
-graph.connect(random, 'number').to(round, 'number');
-graph.connect(round, 'roundedNumber').to(writeFile, 'content');
-graph.connect(writeFile, 'err').to(log, 'in1');
-graph.connect(writeFile, 'path').to(readFile, 'path');
-graph.connect(readFile, 'content').to(prepend, 'text');
+// Main
+graph.connect(request, 'data').to(parseJson, 'in1');
+graph.connect(parseJson, 'out').to(pluck, 'json');
+graph.connect(pluck, 'out').to(prepend, 'text');
 graph.connect(prepend, 'text').to(log, 'in1');
 
-graph.connect(round, 'roundedNumber').to(compare, 'in1');
-graph.connect(compare, 'out').to(andGate, 'in1');
-graph.connect(readFile, 'content').to(andGate, 'in2');
-graph.connect(andGate, 'out').to(delay, 'in1');
-graph.connect(delay, 'out').to(log, 'in1');
+// Errors
+graph.connect(pluck, 'err').to(log, 'in1');
+graph.connect(parseJson, 'err').to(log, 'in1');
+graph.connect(request, 'err').to(log, 'in1');
 
-writeFile.setProps({ path: './output.txt' });
-compare.setProps({ in2: 50 });
-prepend.setProps({ textToPrepend: 'Some cool text: ' });
-request.setProps({ url: 'http://pastebin.com/raw/Gw6SEq5R' });
+prepend.setProps({ textToPrepend: 'London weather: ' });
+pluck.setProps({ path: '.weather[0].main' });
+request.setProps({ url: 'https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b6907d289e10d714a6e88b30761fae22' });
 
-// interval.execute();
-// request.execute({ url: 'http://pastebin.com/raw/Gw6SEq5R' });
 graph.start();
