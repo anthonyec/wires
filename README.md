@@ -4,7 +4,7 @@ Minimal FBP library to manage components communicating in a graph
 ## Getting started
 ### Creating a graph
 ```js
-// Initiaitie a new graph
+// Initiate a new graph
 const graph = createGraph();
 
 // Let the graph know about a new component it can use
