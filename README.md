@@ -33,9 +33,12 @@ toggle.execute({ toggledOn: true });
 If you execute components directly, you'll want usually execute the component at the top of it's connection chain. This is so that all connected components get ran. 
 
 ```txt
+// `toggle` is at the top of it's connection chain.
+// Executing `toggle` will execute `log`. But executing `log` will not 
+// execute `toggle`.
+
 toggle[out] ---> [in1]log
 ```
-_`toggle` is at the top of it's connection chain. Executing `toggle` will execute `log`. But executing `log` will not execute `toggle`_
 
 Instead of manually executing each top level component, `start()` will look for all top level components and execute them.
 ```js
@@ -72,19 +75,19 @@ toggle.execute({ toggledOn: true });
 Components are functions that accept an `object` of props as input and return an `object` of props as output. This keeps the API boilerplate free (hopefully).
 
 ```js
+// An example of an [AND gate](https://en.wikipedia.org/wiki/AND_gate) as a component.
 function AndGate({ in1 = false, in2 = false } = {}) {
   return { out: in1 && in2 };
 };
 ```
-_An example of an [AND gate](https://en.wikipedia.org/wiki/AND_gate) as a component._
 
 ### Everything is a prop
 There isn't a distinction between input and output. Everything that goes into is a component is a prop and stored internally. This allows props to be set on components without connections and for props to be remembered like "state".
 
 ```js
+// An example of setting a prop on a component to forever be `true`.
 andGate.setProps({ in1: true });
 ```
-_An example of setting a prop on a component to forever be `true`_
 
 ## Schema
 ### Connections
