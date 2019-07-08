@@ -29,7 +29,13 @@ toggle.execute({ toggledOn: true });
 // output: LOG: true
 ```
 
+#### Top level components
 If you execute components directly, you'll want usually execute the component at the top of it's connection chain. This is so that all connected components get ran. 
+
+```txt
+toggle[out] ---> [in1]log
+```
+_`toggle` is at the top of it's connection chain. Executing `toggle` will execute `log`. But executing `log` will not execute `toggle`_
 
 Instead of manually executing each top level component, `start()` will look for all top level components and execute them.
 ```js
@@ -42,6 +48,23 @@ However, props can't be passed to them as it isn't certain which components will
 toggle.setProps({ toggledOn: true });
 
 graph.start();
+```
+
+### Full example
+The final graph visualised:
+```txt
+toggle[out] ---> [in1]log
+```
+
+And to create it in code:
+```js
+import createGraph from 'graph';
+import { Toggle, Log } from 'graph/components';
+
+const toggle = graph.createComponent(Toggle);
+const log = graph.createComponent(Log);
+
+toggle.execute({ toggledOn: true });
 ```
 
 ## Design
