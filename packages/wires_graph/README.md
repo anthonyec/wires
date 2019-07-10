@@ -1,5 +1,5 @@
 # Wires Graph
-Minimal FBP library to manage components communicating in a graph
+Minimal [FBP](https://en.wikipedia.org/wiki/Flow-based_programming) library to manage processes communicating in a graph.
 
 ## Getting started
 ### Creating a graph
@@ -7,7 +7,7 @@ Minimal FBP library to manage components communicating in a graph
 // Initiate a new graph
 const graph = createGraph();
 
-// Let the graph know about a new component it can use
+// Let the graph know about a new process it can use as a component
 const toggle = graph.createComponent(Toggle);
 const log = graph.createComponent(Log);
 ```
@@ -19,7 +19,7 @@ graph.connect(toggle, 'out').to(log, 'in1');
 ```
 
 ### Executing components
-Components can be run by calling `execute()` on them. This executes the function the component is created from. And passes it's output to any components it is connected from.
+Components can be run by calling `execute()` on them. This executes the process inside the component. It will pass output from the process to components it is connected to.
 
 ```js
 // Execute the toggle component which will execute any component it is connected to.
@@ -30,22 +30,19 @@ toggle.execute({ toggledOn: true });
 ```
 
 #### Top level components
-If you execute components directly, you'll want usually execute the component at the top of it's connection chain. This is so that all connected components get ran. 
+If you execute component's process directly, execute the component at the top of it's connection chain. This is so that all connected component's procceses get executed. 
 
 ```txt
-// `toggle` is at the top of it's connection chain.
-// Executing `toggle` will execute `log`. But executing `log` will not 
-// execute `toggle`.
-
+// Executing `toggle` will execute `log`. But executing `log` will not execute `toggle`.
 toggle[out] ---> [in1]log
 ```
 
-Instead of manually executing each top level component, `start()` will look for all top level components and execute them.
+Instead of manually executing each top level component, `start()` will look for all top level components and execute their processes.
 ```js
 graph.start();
 ```
 
-However, props can't be passed to them as it isn't certain which components will be top level. Set props with `setProps()` on components that need them.
+However, props can't be passed to them via `start()`. Set props with `setProps()` on components that need them.
 
 ```js
 toggle.setProps({ toggledOn: true });
@@ -72,7 +69,7 @@ toggle.execute({ toggledOn: true });
 
 ## Design
 ### Components are functions
-Components are functions that accept an `object` of props as input and return an `object` of props as output. This keeps the API boilerplate free (hopefully).
+Processes inside components are functions that accept an `object` of props as input and return an `object` of props as output. This keeps the API boilerplate free (hopefully).
 
 ```js
 // An example of an [AND gate](https://en.wikipedia.org/wiki/AND_gate) as a component.
@@ -82,7 +79,7 @@ function AndGate({ in1 = false, in2 = false } = {}) {
 ```
 
 ### Everything is a prop
-There isn't a distinction between input and output. Everything that goes into is a component is a prop and stored internally. This allows props to be set on components without connections and for props to be remembered like "state".
+There isn't a distinction between input and output. Everything that goes into a process is a prop and stored internally. This allows props to be set on processes without connections and for props to be memorized like "state".
 
 ```js
 // An example of setting a prop on a component to forever be `true`.
