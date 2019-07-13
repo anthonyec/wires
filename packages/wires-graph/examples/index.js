@@ -1,61 +1,44 @@
-const { createGraph } = require('../src');
+const Graph = require('../../../dist/wires-graph.cjs');
 
-const Log = require('../components/log');
-const { Prepend } = require('../components/text');
-const { Request } = require('../components/network');
-const { ParseJson, Pluck } = require('../components/json');
-const { Round, Abs, Operate } = require('../components/math');
+function AndGate({ in1 = false, in2 = false } = {}) {
+  const [count, setCount] = Graph.useState(0);
 
-// Initiate the graph
-const graph = createGraph();
+  console.log(count);
+  setCount(count + 1);
 
-// Create components like this...
-const operate = graph.createComponent(Operate);
-const abs = graph.createComponent(Abs);
-const round = graph.createComponent(Round);
+  return {
+    out: in1 && in2
+  }
+}
 
-// Or like this.
-const [log, prepend, request, parseJson, pluck] = graph.createComponents(
-  Log,
-  Prepend,
-  Request,
-  ParseJson,
-  Pluck
-);
+function Counter() {
+  const [count, setCount] = Graph.useState(10);
 
-// Setup
-//// Math
-graph.connect(operate, 'out').to(round, 'in1');
-graph.connect(round, 'out').to(abs, 'in1');
-graph.connect(abs, 'out').to(log, 'in1');
+  console.log('Counter', count);
+  setCount(count + 1);
 
-//// Network
-graph.connect(request, 'data').to(parseJson, 'in1');
-graph.connect(parseJson, 'out').to(pluck, 'json');
-graph.connect(pluck, 'out').to(prepend, 'text');
-graph.connect(prepend, 'text').to(log, 'in1');
+  return { out: count }
+}
 
-/// Errors
-graph.connect(pluck, 'err').to(log, 'in1');
-graph.connect(parseJson, 'err').to(log, 'in1');
-graph.connect(request, 'err').to(log, 'in1');
+function createComponent(process) {
+  return () => {
+    return { process }
+  }
+}
 
-/*
-  operate[out] -> [in1]round[out] -> [in1]abs[out] -> [in1]log
-  request[data] -> [in1]parseJson[out] -> [in1]pluck[out] -> [text]prepend[text] -> [in1]log
-*/
+const counter = createComponent(Counter);
+const counter2 = createComponent(Counter);
 
-// Initial props
-//// Maths
-operate.setProps({ in1: 10, operator: '/', in2: 4 });
+Graph.process(counter);
+Graph.process(counter);
+Graph.process(counter);
+Graph.process(counter);
+Graph.process(counter);
 
-//// Network
-prepend.setProps({ textToPrepend: 'London weather: ' });
-pluck.setProps({ path: '.weather[0].main' });
-request.setProps({
-  url:
-    'https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b6907d289e10d714a6e88b30761fae22'
-});
 
-// Run the graph!
-graph.start();
+Graph.process(counter2);
+Graph.process(counter2);
+Graph.process(counter2);
+Graph.process(counter2);
+Graph.process(counter2);
+
