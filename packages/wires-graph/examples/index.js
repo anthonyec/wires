@@ -1,44 +1,42 @@
 const Graph = require('../../../dist/wires-graph.cjs');
 
-function AndGate({ in1 = false, in2 = false } = {}) {
-  const [count, setCount] = Graph.useState(0);
-
-  console.log(count);
-  setCount(count + 1);
-
-  return {
-    out: in1 && in2
-  }
-}
-
 function Counter() {
-  const [count, setCount] = Graph.useState(10);
+  const [count, setCount] = Graph.useState(0);
+  // const [text, setText] = Graph.useState('foo'); // 2nd state hook!
 
-  console.log('Counter', count);
-  setCount(count + 1);
+  // Graph.useEffect(() => {
+  //   console.log('effect', count, text);
+  // }, [count, text]);
 
-  return { out: count }
-}
-
-function createComponent(process) {
   return () => {
-    return { process }
-  }
+    console.log('render', { count })
+    setCount(count + 1);
+
+    return { count: count + 1 }
+  };
 }
 
-const counter = createComponent(Counter);
-const counter2 = createComponent(Counter);
+function Counter2() {
+  const [count, setCount] = Graph.useState(10);
+  // const [text, setText] = Graph.useState('foo'); // 2nd state hook!
 
-Graph.process(counter);
-Graph.process(counter);
-Graph.process(counter);
-Graph.process(counter);
-Graph.process(counter);
+  // Graph.useEffect(() => {
+  //   console.log('effect', count, text);
+  // }, [count, text]);
 
+  return () => {
+    console.log('render', { count })
+    setCount(count + 1);
 
-Graph.process(counter2);
-Graph.process(counter2);
-Graph.process(counter2);
-Graph.process(counter2);
-Graph.process(counter2);
+    return { count: count + 1 }
+  };
+}
 
+let App;
+
+app = Graph.render(Counter);
+app = Graph.render(Counter);
+app = Graph.render(Counter);
+app = Graph.render(Counter);
+
+console.log(app());

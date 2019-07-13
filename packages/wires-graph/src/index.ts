@@ -1,31 +1,34 @@
 const Graph = (function() {
-  let _val, _deps; // hold our state and dependencies in scope
-
+  let hooks = [],
+    currentHook = 0; // array of hooks, and an iterator!
   return {
-    process(Component) {
-      const Comp = Component();
-      const result = Comp.process();
-
-      console.log(result);
-
+    render(Component) {
+      const Comp = Component(); // run effects
+      Comp();
+      currentHook = 0; // reset for next render
       return Comp;
     },
     useEffect(callback, depArray) {
       const hasNoDeps = !depArray;
-      const hasChangedDeps = _deps
-        ? !depArray.every((el, i) => el === _deps[i])
+      const deps = hooks[currentHook]; // type: array | undefined
+      const hasChangedDeps = deps
+        ? !depArray.every((el, i) => el === deps[i])
         : true;
       if (hasNoDeps || hasChangedDeps) {
         callback();
-        _deps = depArray;
+        hooks[currentHook] = depArray;
       }
+      currentHook++; // done with this hook
     },
     useState(initialValue) {
-      _val = _val || initialValue;
-      function setState(newVal) {
-        _val = newVal;
-      }
-      return [_val, setState];
+      hooks[currentHook] = hooks[currentHook] || initialValue; // type: any
+
+      const setStateHookIndex = currentHook; // for setState's closure!
+      const setState = (newState) => (hooks[setStateHookIndex] = newState);
+
+      console.log(hooks);
+
+      return [hooks[currentHook++], setState];
     }
   };
 })();
