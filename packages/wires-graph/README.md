@@ -19,7 +19,7 @@ const log = graph.createComponent(Log);
 
 ```js
 // Connect the toggle output prop "out" to log input prop "in1"
-graph.connect(toggle, "out").to(log, "in1");
+graph.connect(toggle, 'out').to(log, 'in1');
 ```
 
 ### Executing components
@@ -68,8 +68,8 @@ toggle[out] ---> [in1]log
 And to create it in code:
 
 ```js
-import createGraph from "graph";
-import { Toggle, Log } from "graph/components";
+import createGraph from 'graph';
+import { Toggle, Log } from 'graph/components';
 
 const toggle = graph.createComponent(Toggle);
 const log = graph.createComponent(Log);

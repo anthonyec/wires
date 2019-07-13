@@ -1,4 +1,4 @@
-function ParseJson({ in1 = "{}" } = {}) {
+function ParseJson({ in1 = '{}' } = {}) {
   try {
     return {
       out: JSON.parse(in1)
@@ -8,7 +8,7 @@ function ParseJson({ in1 = "{}" } = {}) {
   }
 }
 
-function Pluck({ json = {}, path = "" }) {
+function Pluck({ json = {}, path = '' }) {
   try {
     return {
       out: eval(`json${path}`)

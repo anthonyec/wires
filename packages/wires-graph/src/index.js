@@ -24,11 +24,11 @@ let currentlyProcessing = null;
 
 export function sideEffect(callback) {
   if (!currentlyProcessing) {
-    console.warn("Side effect can only be in main body of function");
+    console.warn('Side effect can only be in main body of function');
     return;
   }
 
-  logger("sideEffect:", currentlyProcessing.uid);
+  logger('sideEffect:', currentlyProcessing.uid);
 
   if (!currentlyProcessing.mount && callback) {
     currentlyProcessing.mount = callback;
@@ -49,12 +49,12 @@ function Graph() {
 
     applyPropsToState: function(uid, outletPropsFromComponent) {
       // Get the next component the current component is connected to.
-      const connections = this.connections.filter(connection => {
+      const connections = this.connections.filter((connection) => {
         return connection.from.uid === uid;
       });
 
       // For each next component connection:
-      connections.forEach(connection => {
+      connections.forEach((connection) => {
         // Get the next component.
         const nextComponent = this.components[connection.to.uid];
 
@@ -81,7 +81,7 @@ function Graph() {
     },
 
     executeComponent: function(uid, props = {}) {
-      logger("executeComponent:", uid);
+      logger('executeComponent:', uid);
 
       // Combine with existing props that may be there on init.
       const propsToPassIn = {
@@ -96,9 +96,9 @@ function Graph() {
       );
 
       // Check if output props is a function
-      if (typeof outletPropsFromComponent === "function") {
+      if (typeof outletPropsFromComponent === 'function') {
         // Execute the function returned and pass in a callback
-        outletPropsFromComponent(callbackProps => {
+        outletPropsFromComponent((callbackProps) => {
           // When the callback is done, do the rest of the stuff...
           this.setCurrentlyProcessing(null);
           this.applyPropsToState(uid, callbackProps);
@@ -107,7 +107,7 @@ function Graph() {
         return;
       }
 
-      if (typeof outletPropsFromComponent !== "object") {
+      if (typeof outletPropsFromComponent !== 'object') {
         console.warn(
           `${uid} does not return object props. Non-object props has not been implemented.`
         );
@@ -125,11 +125,11 @@ function Graph() {
         createdComponent.unmount();
       }
 
-      const connections = this.connections.filter(connection => {
+      const connections = this.connections.filter((connection) => {
         return connection.to.uid === uid || connection.from.uid === uid;
       });
 
-      connections.forEach(connection => {
+      connections.forEach((connection) => {
         this._disconnect(
           this.components[connection.from.uid],
           this.components[connection.to.uid],
@@ -148,7 +148,7 @@ function Graph() {
         uid,
         props: {},
         process: component,
-        execute: props => this.executeComponent.call(this, uid, props),
+        execute: (props) => this.executeComponent.call(this, uid, props),
         setProps: function(props) {
           this.props = { ...this.props, ...props };
         }
@@ -166,7 +166,7 @@ function Graph() {
     },
 
     createComponents: function(...components) {
-      return components.map(arg => {
+      return components.map((arg) => {
         return this.createComponent(arg);
       });
     },
@@ -184,12 +184,12 @@ function Graph() {
 
     // Components at the top of the graph with no connections to them.
     getTopComponents: function() {
-      const topComponents = Object.keys(this.components).filter(uid => {
-        const componentWithNoInlets = this.connections.filter(connection => {
+      const topComponents = Object.keys(this.components).filter((uid) => {
+        const componentWithNoInlets = this.connections.filter((connection) => {
           return connection.to.uid === uid;
         });
 
-        const componentWithOutlets = this.connections.filter(connection => {
+        const componentWithOutlets = this.connections.filter((connection) => {
           return connection.from.uid === uid;
         });
 
@@ -199,15 +199,15 @@ function Graph() {
         );
       });
 
-      return topComponents.map(uid => {
+      return topComponents.map((uid) => {
         return this.components[uid];
       });
     },
 
     start: function() {
       const tippyToppies = this.getTopComponents();
-      logger("start:", tippyToppies.map(({ uid }) => uid));
-      tippyToppies.forEach(component => component.execute());
+      logger('start:', tippyToppies.map(({ uid }) => uid));
+      tippyToppies.forEach((component) => component.execute());
     },
 
     _connect: function(
@@ -237,7 +237,7 @@ function Graph() {
       const { uid: fromUid } = fromCreatedComponent;
       const { uid: toUid } = toCreatedComponent;
 
-      const indexToRemove = this.connections.findIndex(connection => {
+      const indexToRemove = this.connections.findIndex((connection) => {
         return (
           connection.from.uid === fromUid &&
           connection.from.prop === outlet &&

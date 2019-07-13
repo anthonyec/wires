@@ -1,13 +1,13 @@
 function Delay({ time = 1000, in1 = true } = {}) {
-  return next => {
+  return (next) => {
     setTimeout(() => {
-      next({ out: "timeout_done" });
+      next({ out: 'timeout_done' });
     }, time);
   };
 }
 
 function Interval({ time = 1000, in1 = true } = {}) {
-  return next => {
+  return (next) => {
     setInterval(() => {
       next({ out: in1 });
     }, time);
