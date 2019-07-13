@@ -1,11 +1,11 @@
-function Compare({ in1 = 0, in2 = 0, comparator = ">" } = {}) {
+function Compare({ in1 = 0, in2 = 0, comparator = '>' } = {}) {
   const comparators = {
-    ">": (a, b) => a > b,
-    "<": (a, b) => a < b,
-    ">=": (a, b) => a >= b,
-    "<=": (a, b) => a <= b,
-    "==": (a, b) => a === b,
-    "!==": (a, b) => a !== b
+    '>': (a, b) => a > b,
+    '<': (a, b) => a < b,
+    '>=': (a, b) => a >= b,
+    '<=': (a, b) => a <= b,
+    '==': (a, b) => a === b,
+    '!==': (a, b) => a !== b
   };
 
   return {

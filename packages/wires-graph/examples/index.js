@@ -1,10 +1,10 @@
-const { createGraph } = require("../src");
+const { createGraph } = require('../src');
 
-const Log = require("../components/log");
-const { Prepend } = require("../components/text");
-const { Request } = require("../components/network");
-const { ParseJson, Pluck } = require("../components/json");
-const { Round, Abs, Operate } = require("../components/math");
+const Log = require('../components/log');
+const { Prepend } = require('../components/text');
+const { Request } = require('../components/network');
+const { ParseJson, Pluck } = require('../components/json');
+const { Round, Abs, Operate } = require('../components/math');
 
 // Initiate the graph
 const graph = createGraph();
@@ -25,20 +25,20 @@ const [log, prepend, request, parseJson, pluck] = graph.createComponents(
 
 // Setup
 //// Math
-graph.connect(operate, "out").to(round, "in1");
-graph.connect(round, "out").to(abs, "in1");
-graph.connect(abs, "out").to(log, "in1");
+graph.connect(operate, 'out').to(round, 'in1');
+graph.connect(round, 'out').to(abs, 'in1');
+graph.connect(abs, 'out').to(log, 'in1');
 
 //// Network
-graph.connect(request, "data").to(parseJson, "in1");
-graph.connect(parseJson, "out").to(pluck, "json");
-graph.connect(pluck, "out").to(prepend, "text");
-graph.connect(prepend, "text").to(log, "in1");
+graph.connect(request, 'data').to(parseJson, 'in1');
+graph.connect(parseJson, 'out').to(pluck, 'json');
+graph.connect(pluck, 'out').to(prepend, 'text');
+graph.connect(prepend, 'text').to(log, 'in1');
 
 /// Errors
-graph.connect(pluck, "err").to(log, "in1");
-graph.connect(parseJson, "err").to(log, "in1");
-graph.connect(request, "err").to(log, "in1");
+graph.connect(pluck, 'err').to(log, 'in1');
+graph.connect(parseJson, 'err').to(log, 'in1');
+graph.connect(request, 'err').to(log, 'in1');
 
 /*
   operate[out] -> [in1]round[out] -> [in1]abs[out] -> [in1]log
@@ -47,14 +47,14 @@ graph.connect(request, "err").to(log, "in1");
 
 // Initial props
 //// Maths
-operate.setProps({ in1: 10, operator: "/", in2: 4 });
+operate.setProps({ in1: 10, operator: '/', in2: 4 });
 
 //// Network
-prepend.setProps({ textToPrepend: "London weather: " });
-pluck.setProps({ path: ".weather[0].main" });
+prepend.setProps({ textToPrepend: 'London weather: ' });
+pluck.setProps({ path: '.weather[0].main' });
 request.setProps({
   url:
-    "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b6907d289e10d714a6e88b30761fae22"
+    'https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b6907d289e10d714a6e88b30761fae22'
 });
 
 // Run the graph!

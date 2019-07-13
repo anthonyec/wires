@@ -6,7 +6,7 @@ function wrap(func) {
     return { out: func(in1) };
   };
 
-  Object.defineProperty(op, "name", {
+  Object.defineProperty(op, 'name', {
     value: name,
     writable: false
   });
@@ -15,7 +15,7 @@ function wrap(func) {
 }
 
 const mathFunctions = Object.getOwnPropertyNames(Math).reduce((mem, key) => {
-  const isFunction = typeof Math[key] === "function";
+  const isFunction = typeof Math[key] === 'function';
 
   if (isFunction) {
     mem.push(Math[key]);
@@ -37,14 +37,14 @@ function Random({ min = 0, max = 100, exec = false } = {}) {
   return { out: Math.random() * (max - min + 1) + min };
 }
 
-function Operate({ in1 = 0, in2 = 0, operator = "+" } = {}) {
+function Operate({ in1 = 0, in2 = 0, operator = '+' } = {}) {
   const operators = {
-    "+": (a, b) => a + b,
-    "-": (a, b) => a - b,
-    "/": (a, b) => a / b,
-    "*": (a, b) => a * b,
-    "%": (a, b) => a * b,
-    "^": (a, b) => a ^ b
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '/': (a, b) => a / b,
+    '*': (a, b) => a * b,
+    '%': (a, b) => a * b,
+    '^': (a, b) => a ^ b
   };
 
   return {

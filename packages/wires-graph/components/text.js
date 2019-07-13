@@ -1,4 +1,4 @@
-function Prepend({ textToPrepend = "", text = "" } = {}) {
+function Prepend({ textToPrepend = '', text = '' } = {}) {
   return { text: textToPrepend + text };
 }
 
