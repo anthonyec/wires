@@ -1,22 +1,22 @@
-const { createGraph, sideEffect }  = require('../src');
+const { createGraph, sideEffect } = require("../src");
 
-const Log = require('../components/log');
+const Log = require("../components/log");
 
 // Initiate the graph
 const graph = createGraph();
 
 function Mouse() {
-  return (next) => {
+  return next => {
     function handleMouseMove(evt) {
-      next({ x: evt.clientX, y: evt.clientX })
+      next({ x: evt.clientX, y: evt.clientX });
     }
 
     sideEffect(() => {
-      console.log('mount');
+      console.log("mount");
 
       return () => {
-        console.log('unmount');
-      }
+        console.log("unmount");
+      };
     });
   };
 }
@@ -25,8 +25,8 @@ const log = graph.createComponent(Log);
 const mouse = graph.createComponent(Mouse);
 
 // Setup
-graph.connect(mouse, 'x').to(log, 'in1');
-graph.connect(mouse, 'y').to(log, 'in1');
+graph.connect(mouse, "x").to(log, "in1");
+graph.connect(mouse, "y").to(log, "in1");
 
 // Run the graph!
 graph.start();
@@ -35,4 +35,3 @@ graph.start();
 graph.destroyComponent(mouse);
 
 graph.start();
-

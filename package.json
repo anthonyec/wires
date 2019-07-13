@@ -2,7 +2,8 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build": "bili"
+    "build": "bili",
+    "format": "prettier --loglevel warn --write '**/*.{ts,js,json,jsx,tsx,md}'"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -16,6 +17,7 @@
     "@babel/preset-typescript": "^7.1.0",
     "bili": "^4.8.0",
     "lerna": "^3.15.0",
+    "prettier": "^1.18.2",
     "rollup": "^1.1.0",
     "rollup-plugin-babel": "^4.3.1",
     "rollup-plugin-commonjs": "^9.2.0",
