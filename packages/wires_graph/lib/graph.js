@@ -61,8 +61,11 @@ function Graph() {
         // Get the outlet to inlet mapping for the next component.
         const mapping = getConnectionMapping(connection);
 
+        // TODO: Clean this bit - temp for now to keep values.
+        this.components[uid].setProps(outletPropsFromComponent);
+
         // Combine values from the output to the input mapping.
-        const combinedProps = combinePropsWithValues(outletPropsFromComponent, mapping);
+        const combinedProps = combinePropsWithValues(this.components[uid].props, mapping);
 
         // Store combinedProps as state for next time for value are additive.
         nextComponent.setProps(combinedProps);

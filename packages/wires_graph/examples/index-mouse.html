@@ -1,17 +1,15 @@
 <style>
   body {
-    background: black;
+    background: #373A46;
     margin: 0;
   }
 
   canvas {
-    border: 1px solid red;
+    border: 1px solid white;
   }
 </style>
 
-<canvas id="canvas" width="800" height="600">
-
-</canvas>
+<canvas id="canvas" width="800" height="600"></canvas>
 
 <script>
   window.module = { 'exports': null }
@@ -22,31 +20,119 @@
 
   const graph = createGraph();
 
-  function Mouse({ domNode }) {
+  function Mouse({ domNode = null }) {
     return (next) => {
-      function handleMouseMove(evt) {
-        next({ x: evt.clientX, y: evt.clientX })
+      if (!domNode) {
+        return { err: new Error('No domNode provided!') };
       }
 
-      function handleClick(evt) {
-        next({ clicked: true });
-        next({ clicked: false });
-      }
+      const events = {
+        click: () => {
+          next({ clicked: true });
+          next({ clicked: false });
+        },
+        mousemove: (evt) => {
+          const position = { x: evt.clientX, y: evt.clientY };
+          const { x, y } = position;
+
+          next({ x, y, position });
+        },
+        mouseup: (evt) => {
+          next({ mouseup: true, mousedown: false });
+        },
+        mousedown: (evt) => {
+          next({ mouseup: false, mousedown: true });
+        },
+        mouseenter: (evt) => {
+          next({ mouseenter: true, mouseleave: false });
+        },
+        mouseleave: (evt) => {
+          next({ mouseenter: false, mouseleave: true });
+        }
+      };
 
       sideEffect(() => {
-        domNode.addEventListener('mousemove', handleMouseMove);
-        domNode.addEventListener('click', handleClick);
+        console.log('Mount');
+
+        Object.keys(events).forEach((event) => {
+          const handler = events[event];
+          domNode.addEventListener(event, handler);
+        });
 
         return () => {
-          domNode.removeEventListener('mousemove', handleMouseMove, {
-            passive: true
-          });
-          domNode.removeEventListener('mousemove', handleClick, {
-            passive: true
+          Object.keys(events).forEach((event) => {
+            const handler = events[event];
+            domNode.removeEventListener(event, handler, { passive: true });
           });
         }
       });
     };
+  }
+
+  function Slider({ document = null, domNode = null, min = 0, max = 100, value = 50, render = false } = {}) {
+    return (next) => {
+      if (!domNode || !document) {
+        return { err: new Error('No domNode or document provided!') };
+      }
+
+      sideEffect(() => {
+        const slider = document.createElement('input');
+
+        function handleOnChange(evt) {
+          next({ value: parseInt(slider.value) });
+        }
+
+        slider.setAttribute('type', 'range');
+        slider.setAttribute('min', min);
+        slider.setAttribute('max', max);
+        slider.setAttribute('value', value);
+        domNode.appendChild(slider);
+        domNode.addEventListener('change', handleOnChange);
+
+        next({ value: parseInt(slider.value) });
+
+        return () => {
+          domNode.removeEventListener('change', handleOnChange, {
+            passive: true
+          });
+        }
+      });
+    }
+  }
+
+  function Draw({ ctx = null, x = 0, y = 0, position = null } = {}) {
+    if (!ctx) {
+      return { err: new Error('No ctx provided!') };
+    }
+
+    let drawX = position ? position.x : x;
+    let drawY = position ? position.y : y;
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(drawX, drawY, 2, 0, 2 * Math.PI);
+    ctx.fill();
+
+    return { ctx, x, y };
+  }
+
+  function DrawLine({ ctx = null, position = null, width = 1 } = {}) {
+    if (!ctx) {
+      return { err: new Error('No ctx provided!') };
+    }
+
+    if (!position || position.length === 0 || !position[0].x || !position[0].y) {
+      return {};
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = width;
+    ctx.moveTo(position[0].x, position[0].y);
+    ctx.lineTo(position[1].x, position[1].y);
+    ctx.stroke();
+
+    return { ctx, position };
   }
 
   function Log({ in1 = '' } = {}) {
@@ -57,24 +143,99 @@
     return {};
   }
 
+  function AndGate({ in1 = false, in2 = false } = {}) {
+    return {
+      out: in1 && in2
+    }
+  };
 
+  // TODO: Make another hook for state.
+  let storage = [];
+
+  function Buffer({ size = 2, item = null, waitToFill = false } = {}) {
+    return (next) => {
+      storage.push(item);
+
+      if (storage.length > size) {
+        storage.shift();
+
+        if (waitToFill) {
+          next({ buffer: storage });
+        }
+      }
+
+      if (!waitToFill) {
+        next({ buffer: storage });
+      }
+    }
+  }
+
+  function LocalStorage({ driver = null, value = null } = {}) {
+    if (!driver) {
+      return { err: new Error('No localStorage driver provided!') }
+    }
+
+    if (driver.getItem('store')) {
+      return {
+        value: driver.getItem('store')
+      };
+    }
+
+    if (value) {
+      driver.setItem('store', value);
+      return { value };
+    }
+  }
+
+  function Scene() {
+    return { render: true }
+  }
+
+  const canvas = document.querySelector('canvas');
   const log = graph.createComponent(Log);
   const mouse = graph.createComponent(Mouse);
+  const draw = graph.createComponent(Draw);
+  const andGate = graph.createComponent(AndGate);
+  const andGate2 = graph.createComponent(AndGate);
+  const buffer = graph.createComponent(Buffer);
+  const drawLine = graph.createComponent(DrawLine);
+  const slider = graph.createComponent(Slider);
+  const store = graph.createComponent(LocalStorage);
+  const scene = graph.createComponent(Scene);
 
   // Setup
-  graph.connect(mouse, 'x').to(log, 'in1');
-  graph.connect(mouse, 'y').to(log, 'in1');
-  graph.connect(mouse, 'clicked').to(log, 'in1');
+  graph.connect(scene, 'render').to(slider, 'render');
+
+  graph.connect(mouse, 'mousedown').to(andGate, 'in1');
+  graph.connect(mouse, 'position').to(andGate, 'in2');
+  graph.connect(slider, 'value').to(drawLine, 'width');
+  graph.connect(store, 'value').to(slider, 'value');
+  graph.connect(slider, 'value').to(store, 'value');
+
+  graph.connect(andGate, 'out').to(buffer, 'item');
+  graph.connect(buffer, 'buffer').to(drawLine, 'position');
+
+  graph.connect(draw, 'err').to(log, 'in1');
+  graph.connect(mouse, 'err').to(log, 'in1');
+  graph.connect(drawLine, 'err').to(log, 'in1');
+  graph.connect(store, 'err').to(log, 'in1');
 
   // Init
-  mouse.setProps({ domNode: document.body });
+  mouse.setProps({ domNode: canvas });
+  draw.setProps({ ctx: canvas.getContext('2d') });
+  drawLine.setProps({ ctx: canvas.getContext('2d') });
+  buffer.setProps({ waitToFill: true, size: 5 });
+  store.setProps({ driver: window.localStorage });
+  slider.setProps({ domNode: document.body, document: document, min: 1, max: 10 });
 
   // Run the graph!
   graph.start();
-  graph.start();
 
-  // graph.destroyComponent(mouse);
+  // graph.destroyComponent(buffer);
+  // console.log(graph.components, graph.connections);
+  // const buffer2 = graph.createComponent(Buffer);
 
-  graph.start();
+  // graph.connect(mouse, 'position').to(buffer2, 'item');
+  // // graph.destroyComponent(mouse);
 
 </script>
