@@ -20,12 +20,32 @@ function getConnectionMapping(connection = {}) {
   }
 }
 
+let currentlyProcessing = null;
+
+function sideEffect(callback) {
+  if (!currentlyProcessing) {
+    console.warn('Side effect can only be in main body of function');
+    return;
+  }
+
+  logger('sideEffect:', currentlyProcessing.uid);
+
+  if (!currentlyProcessing.mount && callback) {
+    currentlyProcessing.mount = callback;
+    currentlyProcessing.unmount = callback();
+  }
+}
+
 function Graph() {
   return {
     usedNames: {},
 
     components: {},
     connections: [],
+
+    setCurrentlyProcessing: function (uid) {
+      currentlyProcessing = this.components[uid];
+    },
 
     applyPropsToState: function(uid, outletPropsFromComponent) {
       // Get the next component the current component is connected to.
@@ -64,6 +84,7 @@ function Graph() {
       };
 
       // Execute current component with input props and get the output.
+      this.setCurrentlyProcessing(uid);
       const outletPropsFromComponent = this.components[uid].process(propsToPassIn);
 
       // Check if output props is a function
@@ -72,6 +93,7 @@ function Graph() {
         outletPropsFromComponent((callbackProps) => {
 
           // When the callback is done, do the rest of the stuff...
+          this.setCurrentlyProcessing(null);
           this.applyPropsToState(uid, callbackProps);
         });
 
@@ -83,9 +105,32 @@ function Graph() {
         return;
       }
 
+      this.setCurrentlyProcessing(null);
       this.applyPropsToState(uid, outletPropsFromComponent);
     },
 
+    destroyComponent: function(createdComponent) {
+      const { uid } = createdComponent;
+
+      if (createdComponent.unmount) {
+        createdComponent.unmount();
+      }
+
+      const connections = this.connections.filter((connection) => {
+        return connection.to.uid === uid || connection.from.uid === uid;
+      });
+
+      connections.forEach((connection) => {
+        this._disconnect(
+          this.components[connection.from.uid],
+          this.components[connection.to.uid],
+          connection.from.prop,
+          connection.to.prop
+        )
+      })
+
+      delete this.components[uid];
+    },
 
     createComponent: function(component) {
       const { name } = component;
@@ -200,6 +245,9 @@ function Graph() {
   };
 }
 
-module.exports = function() {
-  return new Graph();
+module.exports = {
+  createGraph: function() {
+    return new Graph();
+  },
+  sideEffect
 };

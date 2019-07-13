@@ -1,0 +1,80 @@
+<style>
+  body {
+    background: black;
+    margin: 0;
+  }
+
+  canvas {
+    border: 1px solid red;
+  }
+</style>
+
+<canvas id="canvas" width="800" height="600">
+
+</canvas>
+
+<script>
+  window.module = { 'exports': null }
+</script>
+<script src="../lib/graph.js"></script>
+<script>
+  const { createGraph } = module.exports;
+
+  const graph = createGraph();
+
+  function Mouse({ domNode }) {
+    return (next) => {
+      function handleMouseMove(evt) {
+        next({ x: evt.clientX, y: evt.clientX })
+      }
+
+      function handleClick(evt) {
+        next({ clicked: true });
+        next({ clicked: false });
+      }
+
+      sideEffect(() => {
+        domNode.addEventListener('mousemove', handleMouseMove);
+        domNode.addEventListener('click', handleClick);
+
+        return () => {
+          domNode.removeEventListener('mousemove', handleMouseMove, {
+            passive: true
+          });
+          domNode.removeEventListener('mousemove', handleClick, {
+            passive: true
+          });
+        }
+      });
+    };
+  }
+
+  function Log({ in1 = '' } = {}) {
+    if (in1) {
+      console.log('LOG:', in1);
+    }
+
+    return {};
+  }
+
+
+  const log = graph.createComponent(Log);
+  const mouse = graph.createComponent(Mouse);
+
+  // Setup
+  graph.connect(mouse, 'x').to(log, 'in1');
+  graph.connect(mouse, 'y').to(log, 'in1');
+  graph.connect(mouse, 'clicked').to(log, 'in1');
+
+  // Init
+  mouse.setProps({ domNode: document.body });
+
+  // Run the graph!
+  graph.start();
+  graph.start();
+
+  // graph.destroyComponent(mouse);
+
+  graph.start();
+
+</script>
