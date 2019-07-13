@@ -1,4 +1,4 @@
-const { createGraph, sideEffect }  = require('../lib/graph');
+const { createGraph, sideEffect }  = require('../src');
 
 const Log = require('../components/log');
 

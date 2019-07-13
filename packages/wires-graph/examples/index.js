@@ -1,4 +1,4 @@
-const { createGraph }  = require('../lib/graph');
+const { createGraph }  = require('../src');
 
 const Log = require('../components/log');
 const { Prepend } = require('../components/text');

@@ -22,7 +22,7 @@ function getConnectionMapping(connection = {}) {
 
 let currentlyProcessing = null;
 
-function sideEffect(callback) {
+export function sideEffect(callback) {
   if (!currentlyProcessing) {
     console.warn('Side effect can only be in main body of function');
     return;
@@ -248,9 +248,8 @@ function Graph() {
   };
 }
 
-module.exports = {
-  createGraph: function() {
-    return new Graph();
-  },
-  sideEffect
-};
+function createGraph() {
+  return new Graph();
+}
+
+export default createGraph;
