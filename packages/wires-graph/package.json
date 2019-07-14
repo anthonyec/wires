@@ -1,11 +1,11 @@
 {
-  "name": "wires_circuit",
-  "version": "1.0.0",
+  "name": "wires-graph",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "bili",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "author": "",
   "license": "ISC"
