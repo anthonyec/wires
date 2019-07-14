@@ -1,4 +1,4 @@
-const { createGraph } = require('../src');
+const createGraph = require('../../../dist/wires-graph.cjs').default;
 
 const Log = require('../components/log');
 const { Prepend } = require('../components/text');

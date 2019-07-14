@@ -2,21 +2,24 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build": "bili",
-    "format": "prettier --loglevel warn --write '**/*.{ts,js,json,jsx,tsx,md}'"
+    "build": "lerna run build --stream --parallel",
+    "format": "prettier --loglevel warn --write '**/*.{ts,js,json,jsx,tsx,md}'",
+    "test": "lerna run test --stream --parallel"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/node": "^7.5.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
     "@babel/plugin-transform-async-to-generator": "^7.2.0",
-    "@babel/plugin-transform-react-jsx": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.1.0",
+    "@babel/register": "^7.4.4",
+    "@babel/runtime": "^7.5.4",
     "bili": "^4.8.0",
     "lerna": "^3.15.0",
+    "mocha": "^6.1.4",
     "prettier": "^1.18.2",
     "rollup": "^1.1.0",
     "rollup-plugin-babel": "^4.3.1",
@@ -24,6 +27,7 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-replace": "^2.1.0",
-    "rollup-plugin-terser": "^4.0.2"
+    "rollup-plugin-terser": "^4.0.2",
+    "sinon": "^7.3.2"
   }
 }

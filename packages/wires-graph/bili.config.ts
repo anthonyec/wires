@@ -1,10 +1,12 @@
 import { Config } from 'bili';
 
 const config: Config = {
-  input: 'packages/wires-graph/src/index.js',
+  input: 'src/',
   output: {
+    moduleName: 'WiresGraph',
     fileName: 'wires-graph[min].[format][ext]',
-    minify: true
+    minify: false,
+    format: ['cjs', 'iife-min', 'es-min']
   }
 };
 
