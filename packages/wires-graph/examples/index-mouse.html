@@ -11,13 +11,9 @@
 
 <canvas id="canvas" width="800" height="600"></canvas>
 
+<script src="../../../dist/wires-graph.min.iife.js"></script>
 <script>
-  window.module = { 'exports': null }
-</script>
-<script src="../src/index.js"></script>
-<script>
-  const { createGraph } = module.exports;
-
+  const { default: createGraph, sideEffect } = WiresGraph;
   const graph = createGraph();
 
   function Mouse({ domNode = null }) {
