@@ -18,10 +18,6 @@ export default {
     }
   },
   process: NotGate,
-  migrate: (prevVersion, currentVersion, savedProps) => {
-
-  },
+  migrate: (prevVersion, currentVersion, savedProps) => {},
   icon: ''
 };
-
-

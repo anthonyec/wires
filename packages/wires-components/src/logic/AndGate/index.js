@@ -24,10 +24,6 @@ export default {
     }
   },
   process: AndGate,
-  migrate: (prevVersion, currentVersion, savedProps) => {
-
-  },
+  migrate: (prevVersion, currentVersion, savedProps) => {},
   icon: ''
 };
-
-

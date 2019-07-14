@@ -18,8 +18,6 @@ export default {
     }
   },
   process: Log,
-  migrate: (prevVersion, currentVersion, savedProps) => { },
+  migrate: (prevVersion, currentVersion, savedProps) => {},
   icon: ''
 };
-
-

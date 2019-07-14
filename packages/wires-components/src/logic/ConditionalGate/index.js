@@ -21,14 +21,7 @@ export default {
       label: 'Comparator',
       type: 'selection',
       default: '>',
-      options: [
-        '>',
-        '<',
-        '>=',
-        '<=',
-        '==',
-        '!='
-      ],
+      options: ['>', '<', '>=', '<=', '==', '!='],
       input: true
     },
     out: {

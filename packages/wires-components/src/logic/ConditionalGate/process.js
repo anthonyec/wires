@@ -1,4 +1,8 @@
-export default function ConditionalGate({ in1 = 0, in2 = 0, comparator = '>' } = {}) {
+export default function ConditionalGate({
+  in1 = 0,
+  in2 = 0,
+  comparator = '>'
+} = {}) {
   const comparators = {
     '>': (a, b) => a > b,
     '<': (a, b) => a < b,

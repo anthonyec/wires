@@ -27,5 +27,3 @@ export default {
   migrate: (prevVersion, currentVersion, savedProps) => {},
   icon: ''
 };
-
-
