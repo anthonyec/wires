@@ -12,7 +12,11 @@ export default function ConditionalGate({
     '!=': (a, b) => a !== b
   };
 
+  const comparatorToUse = comparators[comparator]
+    ? comparator
+    : '>';
+
   return {
-    out: comparators[comparator](in1, in2)
+    out: comparators[comparatorToUse](in1, in2)
   };
 }
