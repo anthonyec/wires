@@ -1,11 +1,11 @@
 {
   "name": "wires-components",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.0",
+  "description": "Standard set of components for Wires",
   "main": "index.js",
   "scripts": {
     "test": "mocha \"./src/**/*.test.js\" --require @babel/register --colors"
   },
-  "author": "",
+  "author": "Anthony Cossins",
   "license": "ISC"
 }
