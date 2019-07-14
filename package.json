@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build": "bili",
+    "build": "lerna run build --stream --parallel",
     "format": "prettier --loglevel warn --write '**/*.{ts,js,json,jsx,tsx,md}'",
     "test": "lerna run test --stream --parallel"
   },

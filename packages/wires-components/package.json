@@ -4,6 +4,7 @@
   "description": "Standard set of components for Wires",
   "main": "index.js",
   "scripts": {
+    "build": "bili",
     "test": "mocha \"./src/**/*.test.js\" --require @babel/register --colors"
   },
   "author": "Anthony Cossins",
