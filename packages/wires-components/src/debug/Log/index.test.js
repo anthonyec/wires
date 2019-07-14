@@ -16,10 +16,7 @@ describe('Log', () => {
       const { name, description, version, icon } = component;
 
       assert.strictEqual(name, 'Log');
-      assert.strictEqual(
-        description,
-        'Log input to the developer console'
-      );
+      assert.strictEqual(description, 'Log input to the developer console');
       assert.strictEqual(version, 1);
       assert.strictEqual(icon, '');
     });

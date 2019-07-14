@@ -3,7 +3,7 @@ export default function Stringify({ jsonObject = null } = {}) {
     return {
       out: JSON.stringify(jsonObject)
     };
-  } catch(err) {
+  } catch (err) {
     return { err };
   }
 }

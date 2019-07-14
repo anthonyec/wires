@@ -3,7 +3,7 @@ export default function Parse({ jsonString = null } = {}) {
     return {
       out: JSON.parse(jsonString)
     };
-  } catch(err) {
+  } catch (err) {
     return { err };
   }
 }
