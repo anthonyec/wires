@@ -1,4 +1,4 @@
 {
-  "packages": ["packages/wires-components"],
+  "packages": ["packages/*"],
   "version": "0.0.0"
 }
