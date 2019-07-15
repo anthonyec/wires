@@ -2,14 +2,14 @@ import assert from 'assert';
 
 import component from './';
 import process from './process';
-import { STRING, OBJECT } from '../../types';
+import { BOOLEAN } from '../../types';
 
-describe('Parse', () => {
+describe('NotGate', () => {
   describe('component', () => {
     it('has correct meta', () => {
       const { name, description, version, icon } = component;
-      const expectedName = 'Parse';
-      const expectedDescription = 'Parse JSON string to object';
+      const expectedName = 'NOT Gate';
+      const expectedDescription = 'Output the inverted input';
 
       assert.strictEqual(name, expectedName);
       assert.strictEqual(description, expectedDescription);
@@ -24,14 +24,15 @@ describe('Parse', () => {
     it('has correct props', () => {
       const { props } = component;
       const expectedProps = {
-        jsonString: {
-          label: 'JSON String',
-          type: STRING,
+        in1: {
+          label: 'Input',
+          type: BOOLEAN,
+          default: false,
           input: true
         },
         out: {
-          label: 'JSON Output',
-          type: OBJECT,
+          label: 'Output',
+          type: BOOLEAN,
           output: true
         }
       };
@@ -41,24 +42,16 @@ describe('Parse', () => {
   });
 
   describe('process', () => {
-    it('parses JSON string', () => {
-      const jsonString = '{ "key": "value", "number": 123, "bool": true }';
-      const output = process({ jsonString });
+    it('outputs true when in1 is false', () => {
+      const output = process({ in1: false });
 
-      assert.deepStrictEqual(output, {
-        out: {
-          key: 'value',
-          number: 123,
-          bool: true
-        }
-      });
+      assert.deepStrictEqual(output, { out: true });
     });
 
-    it('outputs err when JSON string is invalid', () => {
-      const jsonString = '"key": value';
-      const output = process({ jsonString });
+    it('outputs false when in1 is true', () => {
+      const output = process({ in1: true });
 
-      assert.strictEqual(output.err instanceof Error, true);
+      assert.deepStrictEqual(output, { out: false });
     });
   });
 });

@@ -1,4 +1,5 @@
 import process from './process';
+import { STRING, OBJECT } from '../../types';
 
 export default {
   version: 1,
@@ -7,12 +8,12 @@ export default {
   props: {
     jsonString: {
       label: 'JSON String',
-      type: 'string',
+      type: STRING,
       input: true
     },
     out: {
       label: 'JSON Output',
-      type: 'object',
+      type: OBJECT,
       output: true
     }
   },

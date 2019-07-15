@@ -1,4 +1,5 @@
 import NotGate from './process';
+import { BOOLEAN } from '../../types';
 
 export default {
   version: 1,
@@ -7,13 +8,13 @@ export default {
   props: {
     in1: {
       label: 'Input',
-      type: 'bool',
+      type: BOOLEAN,
       default: false,
       input: true
     },
     out: {
       label: 'Output',
-      type: 'bool',
+      type: BOOLEAN,
       output: true
     }
   },

@@ -2,6 +2,7 @@ import assert from 'assert';
 
 import component from './';
 import process from './process';
+import { BOOLEAN, STRING } from '../../types';
 
 describe('ConditionalGate', () => {
   describe('component', () => {
@@ -26,26 +27,26 @@ describe('ConditionalGate', () => {
       const expectedProps = {
         in1: {
           label: 'Input 1',
-          type: 'bool',
+          type: BOOLEAN,
           default: false,
           input: true
         },
         in2: {
           label: 'Input 2',
-          type: 'bool',
+          type: BOOLEAN,
           default: false,
           input: true
         },
         comparator: {
           label: 'Comparator',
-          type: 'selection',
+          type: STRING,
           default: '>',
           options: ['>', '<', '>=', '<=', '==', '!='],
           input: true
         },
         out: {
           label: 'Output',
-          type: 'bool',
+          type: BOOLEAN,
           output: true
         }
       };

@@ -2,6 +2,7 @@ import assert from 'assert';
 
 import component from './';
 import process from './process';
+import { OBJECT, STRING } from '../../types';
 
 describe('Stringify', () => {
   describe('component', () => {
@@ -25,12 +26,12 @@ describe('Stringify', () => {
       const expectedProps = {
         jsonObject: {
           label: 'JSON Object',
-          type: 'object',
+          type: OBJECT,
           input: true
         },
         out: {
           label: 'JSON String',
-          type: 'string',
+          type: STRING,
           output: true
         }
       };
