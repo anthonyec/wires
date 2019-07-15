@@ -1,5 +1,7 @@
+import NanoEvents from 'nanoevents'
+
 function logger(...args) {
-  console.log(...args);
+  // console.log(...args);
 }
 
 function combinePropsWithValues(props = {}, mapping = {}) {
@@ -42,6 +44,12 @@ function Graph() {
 
     components: {},
     connections: [],
+
+    emitter: new NanoEvents(),
+
+    on: function() {
+      return this.emitter.on.apply(this.emitter, arguments)
+    },
 
     setCurrentlyProcessing: function(uid) {
       currentlyProcessing = this.components[uid];
@@ -89,11 +97,14 @@ function Graph() {
         ...props
       };
 
+
       // Execute current component with input props and get the output.
       this.setCurrentlyProcessing(uid);
       const outletPropsFromComponent = this.components[uid].process(
         propsToPassIn
       );
+
+      this.emitter.emit('executed', { uid, input: propsToPassIn });
 
       // Check if output props is a function
       if (typeof outletPropsFromComponent === 'function') {
@@ -225,6 +236,8 @@ function Graph() {
       const newConnections = [...this.connections, newConnection];
 
       this.connections = newConnections;
+
+      this.emitter.emit('connected', { connection: newConnection });
       logger(`connect: ${fromUid} [${outlet}] ---> [${inlet}] ${toUid}`);
     },
 

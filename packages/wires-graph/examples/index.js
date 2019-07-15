@@ -1,4 +1,4 @@
-const createGraph = require('../../../dist/wires-graph.cjs').default;
+const createGraph = require('../dist/wires-graph.cjs').default;
 
 const Log = require('../components/log');
 const { Prepend } = require('../components/text');
@@ -22,6 +22,26 @@ const [log, prepend, request, parseJson, pluck] = graph.createComponents(
   ParseJson,
   Pluck
 );
+
+graph.on('connected', (evt) => {
+  console.log('connected', evt);
+});
+
+graph.on('disconnected', (evt) => {
+  console.log('Disconnect');
+});
+
+graph.on('created', (evt) => {
+  console.log('Component created');
+});
+
+graph.on('destroyed', (evt) => {
+  console.log('Component destroyed');
+});
+
+graph.on('executed', (evt) => {
+  console.log('execute', evt);
+});
 
 // Setup
 //// Math
