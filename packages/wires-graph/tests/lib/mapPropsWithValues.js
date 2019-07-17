@@ -64,4 +64,29 @@ describe('mapPropsWithValues', () => {
 
     assert.deepStrictEqual(result, expected);
   });
+
+  it('returns empty object if empty mapping is provided', () => {
+    const props = {
+      a: 1,
+      c: 3
+    };
+    const expected = {};
+
+    const result = mapPropsWithValues(props, {});
+
+    assert.deepStrictEqual(result, expected);
+  });
+
+  it('returns empty object if empty props is provided', () => {
+    const mapping = {
+      x: 'a',
+      y: 'b',
+      z: 'c',
+    };
+    const expected = {};
+
+    const result = mapPropsWithValues({}, mapping);
+
+    assert.deepStrictEqual(result, expected);
+  });
 });
