@@ -2,7 +2,7 @@ import assert from 'assert';
 
 import filterInputConnectionsByUid from '../../src/lib/filterInputConnectionsByUid';
 
-describe.only('filterInputConnectionsByUid', () => {
+describe('filterInputConnectionsByUid', () => {
   it('returns filtered connections by uid', () => {
     const connections = [
       {
