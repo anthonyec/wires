@@ -2,7 +2,7 @@ import assert from 'assert';
 
 import uidGenerator from '../../src/lib/uidGenerator';
 
-describe.only('uidGenerator', () => {
+describe('uidGenerator', () => {
   it('creates getUid function', () => {
     const getUid = uidGenerator();
 
