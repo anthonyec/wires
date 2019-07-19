@@ -1,3 +1,7 @@
+/**
+ * Return a function that can be used to create uniquie incremented names
+ * `const getUid = uidGenerator(); getUid('name'); // name_1`
+ */
 export default function uidGenerator() {
   let usedNames = {};
 
