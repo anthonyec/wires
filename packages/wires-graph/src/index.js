@@ -35,9 +35,6 @@ function Graph() {
       }
 
       currentProcessUid = createdProcess.uid;
-    },
-    useEffect(callback) {
-      callback(currentProcessUid);
     }
   };
 }
