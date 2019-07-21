@@ -1,3 +1,7 @@
+/**
+ * Return the process UIDs that have connections coming from them but no
+ * connections going to them. E.g `topProcess --> secondProcess`
+ */
 export default function filterTopProcesses(connections = []) {
   const uniqueUids = connections.reduce((mem, connection) => {
     if (!mem.includes(connection.from.uid)) {
