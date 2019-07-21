@@ -1,3 +1,51 @@
+import translations from './config/locales/en-GB.json';
+import uidGenerator from './lib/uidGenerator';
+
+function Graph() {
+  let currentProcessUid = null;
+
+  const getUid = uidGenerator();
+  const processes = {};
+
+  return {
+    createProcess(processor) {
+      if (!processor || !(processor instanceof Function)) {
+        throw new Error(translations['error_createProcess']);
+      }
+
+      const uid = getUid(processor.name);
+
+      return {
+        uid,
+        processor
+      }
+    },
+    process(createdProcess) {
+      if (!createdProcess) {
+        throw new Error(translations['error_process_missing_arg']);
+      }
+
+      if (
+        !createdProcess.uid ||
+        !createdProcess.processor ||
+        (typeof createdProcess.uid !=='string') ||
+        (typeof createdProcess.processor !=='function')
+      ) {
+        throw new Error(translations['error_process_wrong_schema']);
+      }
+
+      currentProcessUid = createdProcess.uid;
+    },
+    useEffect(callback) {
+      callback(currentProcessUid);
+    }
+  };
+}
+
+export default () => {
+  return new Graph();
+};
+
 // Get the next component the current component is connected to.
   // For each next component connection:
   // Get the next component.

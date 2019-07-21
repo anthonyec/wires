@@ -1,0 +1,5 @@
+{
+  "error_createProcess": "Function is required to create a process",
+  "error_process_missing_arg": "Created process is a required argument",
+  "error_process_wrong_schema": "Created process does not conform to { uid: [string], processor: [function] }"
+}

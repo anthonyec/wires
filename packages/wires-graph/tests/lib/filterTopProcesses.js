@@ -2,7 +2,7 @@ import assert from 'assert';
 
 import filterTopProcesses from '../../src/lib/filterTopProcesses';
 
-describe.only('filterTopProcesses', () => {
+describe('filterTopProcesses', () => {
   it('returns array of UIDs of top process', () => {
     const connections = [
       {
