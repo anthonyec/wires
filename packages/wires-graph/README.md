@@ -2,6 +2,8 @@
 
 Minimal [FBP](https://en.wikipedia.org/wiki/Flow-based_programming) library to manage processes communicating in a graph.
 
+⚠️ **Currently being rewritten: https://github.com/anthonyec/wires/pull/2**
+
 ## Getting started
 
 ### Creating a graph
