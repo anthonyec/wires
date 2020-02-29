@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "bili",
-    "test": "echo \"Error: no test specified\""
+    "test": "mocha \"./tests/**/*.js\" --require @babel/register --colors"
   },
   "author": "",
   "license": "ISC",
